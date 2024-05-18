@@ -1,1 +1,2 @@
+subdir('egrss')
 subdir('tests')
