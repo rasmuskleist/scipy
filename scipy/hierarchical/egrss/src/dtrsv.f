@@ -46,7 +46,6 @@
 *     Start the operations. In this version the elements of A are
 *     accessed sequentially with one pass through A.
 *
-      INFO = 0
       CALL DCOPY(P, 0.0D0, 0, WORK, 1)
       IF (LSAME(TRANS, 'N')) THEN
           IF (LSAME(UPLO, 'U')) THEN
