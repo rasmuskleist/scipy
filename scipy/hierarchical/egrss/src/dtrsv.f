@@ -62,14 +62,14 @@
           END IF
       ELSE
           IF (LSAME(UPLO, 'U')) THEN
-              DO J = N, 1, -1
-                  B(J) = (B(J) - DOT_PRODUCT(WORK, VT(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), U(J, 1), P, WORK, 1)
+              DO J = 1, N
+                  B(J) = (B(J) - DOT_PRODUCT(WORK, VT(:,J))) / D(J)
+                  CALL DAXPY(P, B(J), U(J, 1), N, WORK, 1)
               ENDDO
           ELSE
-              DO J = 1, N
-                  B(J) = (B(J) - DOT_PRODUCT(WORK, VT(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), U(J, 1), P, WORK, 1)
+              DO J = N, 1, -1
+                  B(J) = (B(J) - DOT_PRODUCT(WORK, VT(:,J))) / D(J)
+                  CALL DAXPY(P, B(J), U(J, 1), N, WORK, 1)
               ENDDO
           END IF
       END IF
