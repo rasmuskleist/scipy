@@ -14,10 +14,12 @@
       DOUBLE PRECISION Z(P)
 *     ..
 *     .. External Functions ..
+      EXTERNAL DDOT
       LOGICAL LSAME
       EXTERNAL LSAME
 *     ..
 *     .. External Subroutines ..
+      EXTERNAL DAXPY
       EXTERNAL XERBLA
 *     ..
 
@@ -52,24 +54,24 @@
           IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
                   B(J) = (B(J) - DOT_PRODUCT(Z, U(J,:))) / D(J)
-                  Z = Z + VT(:,J) * B(J)
+                  CALL DAXPY(P, B(J), VT(:, J), 1, Z, 1)
               ENDDO
           ELSE
               DO J = 1, N
                   B(J) = (B(J) - DOT_PRODUCT(Z, U(J,:))) / D(J)
-                  Z = Z + VT(:,J) * B(J)
+                  CALL DAXPY(P, B(J), VT(:, J), 1, Z, 1)
               ENDDO
           END IF
       ELSE
           IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
                   B(J) = (B(J) - DOT_PRODUCT(Z, VT(J,:))) / D(J)
-                  Z = Z + U(:,J) * B(J)
+                  CALL DAXPY(P, B(J), U(J, :), P, Z, 1)
               ENDDO
           ELSE
               DO J = 1, N
                   B(J) = (B(J) - DOT_PRODUCT(Z, VT(J,:))) / D(J)
-                  Z = Z + U(:,J) * B(J)
+                  CALL DAXPY(P, B(J), U(J, :), P, Z, 1)
               ENDDO
           END IF
       END IF
