@@ -1,17 +1,14 @@
-      SUBROUTINE DTRSV(UPLO,TRANS,N,P,U,VT,D,B,INFO)
+      SUBROUTINE DTRSV(UPLO,TRANS,N,P,U,VT,D,B,WORK,LWORK,INFO)
 *
 *     .. Scalar Arguments ..
-      INTEGER INFO,N,P
+      INTEGER INFO,LWORK,N,P
       CHARACTER TRANS,UPLO
 *     ..
 *     .. Array Arguments ..
-      DOUBLE PRECISION D(N), U(N,P), VT(P,N), B(N)
+      DOUBLE PRECISION D(N), U(N,P), VT(P,N), B(N), WORK(LWORK)
 *     ..
 *
 *  =====================================================================
-*     ..
-*     .. Local Arrays ..
-      DOUBLE PRECISION Z(P)
 *     ..
 *     .. External Functions ..
       EXTERNAL DDOT
@@ -50,29 +47,29 @@
 *     accessed sequentially with one pass through A.
 *
       INFO = 0
-      CALL DCOPY(P, 0.0D0, 0, Z, 1)
+      CALL DCOPY(P, 0.0D0, 0, WORK, 1)
       IF (LSAME(TRANS, 'N')) THEN
           IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
-                  B(J) = (B(J) - DOT_PRODUCT(Z, U(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), VT(1, J), 1, Z, 1)
+                  B(J) = (B(J) - DOT_PRODUCT(WORK, U(J,:))) / D(J)
+                  CALL DAXPY(P, B(J), VT(1, J), 1, WORK, 1)
               ENDDO
           ELSE
               DO J = 1, N
-                  B(J) = (B(J) - DOT_PRODUCT(Z, U(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), VT(1, J), 1, Z, 1)
+                  B(J) = (B(J) - DOT_PRODUCT(WORK, U(J,:))) / D(J)
+                  CALL DAXPY(P, B(J), VT(1, J), 1, WORK, 1)
               ENDDO
           END IF
       ELSE
           IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
-                  B(J) = (B(J) - DOT_PRODUCT(Z, VT(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), U(J, 1), P, Z, 1)
+                  B(J) = (B(J) - DOT_PRODUCT(WORK, VT(J,:))) / D(J)
+                  CALL DAXPY(P, B(J), U(J, 1), P, WORK, 1)
               ENDDO
           ELSE
               DO J = 1, N
-                  B(J) = (B(J) - DOT_PRODUCT(Z, VT(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), U(J, 1), P, Z, 1)
+                  B(J) = (B(J) - DOT_PRODUCT(WORK, VT(J,:))) / D(J)
+                  CALL DAXPY(P, B(J), U(J, 1), P, WORK, 1)
               ENDDO
           END IF
       END IF
