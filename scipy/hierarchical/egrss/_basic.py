@@ -2,7 +2,7 @@ import numpy as np
 from .egrss import get_egrss_func
 from scipy.linalg import LinAlgError
 
-def solve_triangular(u, vh, d, b):
+def solve_triangular(u, vh, d, b, trans=0, lower=False):
     """
     Solve a triangular system of equations.
 
@@ -14,13 +14,16 @@ def solve_triangular(u, vh, d, b):
         The matrix V^H in the QR decomposition.
     """
 
+    uplo = 'L' if lower else 'U'
+    trans = {0: 'N', 1: 'T', 2: 'C'}.get(trans, trans)
+
     # Get the function
     trsv = get_egrss_func('trsv', (u, vh, d, b))
 
     x = np.copy(b, order='F')
 
     # Solve the triangular system
-    info = trsv("L", "N", u, vh, d, x)
+    info = trsv(uplo, trans, u, vh, d, x)
 
     if info == 0:
         return x

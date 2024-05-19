@@ -35,7 +35,7 @@ class TestSolveTriangular:
         b = np.random.randn(16)
 
         A = np.tril(U @ Vh, -1) + np.diag(d)
-        x = solve_triangular(U, Vh, d, b)
+        x = solve_triangular(U, Vh, d, b, lower=True)
 
         assert_array_almost_equal(A @ x, b)
 
