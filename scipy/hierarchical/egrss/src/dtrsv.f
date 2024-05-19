@@ -55,24 +55,24 @@
           IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
                   B(J) = (B(J) - DOT_PRODUCT(Z, U(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), VT(:, J), 1, Z, 1)
+                  CALL DAXPY(P, B(J), VT(1, J), 1, Z, 1)
               ENDDO
           ELSE
               DO J = 1, N
                   B(J) = (B(J) - DOT_PRODUCT(Z, U(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), VT(:, J), 1, Z, 1)
+                  CALL DAXPY(P, B(J), VT(1, J), 1, Z, 1)
               ENDDO
           END IF
       ELSE
           IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
                   B(J) = (B(J) - DOT_PRODUCT(Z, VT(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), U(J, :), P, Z, 1)
+                  CALL DAXPY(P, B(J), U(J, 1), P, Z, 1)
               ENDDO
           ELSE
               DO J = 1, N
                   B(J) = (B(J) - DOT_PRODUCT(Z, VT(J,:))) / D(J)
-                  CALL DAXPY(P, B(J), U(J, :), P, Z, 1)
+                  CALL DAXPY(P, B(J), U(J, 1), P, Z, 1)
               ENDDO
           END IF
       END IF
