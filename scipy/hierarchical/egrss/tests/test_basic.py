@@ -29,32 +29,13 @@ class TestSolveTriangular:
         solve_triangular on a simple 2x2 matrix.
         """
 
-        U = np.random.randn(4, 2)
-        Vh = np.random.randn(2, 4)
-        d = np.random.randn(4)
-        b = np.random.randn(4)
+        U = np.random.randn(16, 8)
+        Vh = np.random.randn(8, 16)
+        d = np.ones(16)
+        b = np.random.randn(16)
 
         A = np.tril(U @ Vh, -1) + np.diag(d)
         x = solve_triangular(U, Vh, d, b)
-#
-        print(x)
-        print(A @ x)
-        print(b)
-#
-        #print(np.allclose(A @ x, b))
+
         assert_array_almost_equal(A @ x, b)
 
-        #U = np.asfortranarray(randn(4, 2), dtype=np.float64)
-        #Vh = np.asfortranarray(randn(2, 4), dtype=np.float64)
-        #print(U)
-        #d = np.asfortranarray(randn(4), dtype=np.float64)
-        #b = np.asfortranarray(randn(4), dtype=np.float64)
-        #print(b)
-#
-        #A = tril(U @ Vh, -1) + diag(d)
-        #x = solve_triangular(U, Vh, d, b)
-#
-        #print(A)
-        #print(x)
-        #print(b)
-        #assert_array_almost_equal(A @ x, b)
