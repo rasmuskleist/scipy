@@ -16,6 +16,24 @@
 *     .. External Functions ..
       LOGICAL LSAME
       EXTERNAL LSAME
+*     ..
+*
+*     Test the input parameters.
+*
+      INFO = 0
+      IF (.NOT.LSAME(UPLO,'U') .AND. .NOT.LSAME(UPLO,'L')) THEN
+          INFO = 1
+      ELSE IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
+     + .NOT.LSAME(TRANS,'C')) THEN
+          INFO = 2
+      ELSE IF (N.LT.0) THEN
+          INFO = 4
+      END IF
+*
+*     Quick return if possible.
+*
+      IF (N.EQ.0) RETURN
+
 *
 *     Start the operations. In this version the elements of A are
 *     accessed sequentially with one pass through A.
