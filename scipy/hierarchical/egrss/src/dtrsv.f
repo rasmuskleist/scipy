@@ -50,6 +50,7 @@
 *
       Z = 0.00
       INFO = 0
+      CALL DCOPY(P, 0.0D0, 0, Z, 1)
       IF (LSAME(TRANS, 'N')) THEN
           IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
