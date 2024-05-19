@@ -1,6 +1,6 @@
 import numpy as np
 
-from scipy.hierarchical.egrss import _fegrss
+from scipy.hierarchical.egrss import _egrss
 from scipy.linalg.blas import find_best_blas_type
 
 
@@ -26,7 +26,7 @@ def get_egrss_func(name, arrays=(), dtype=None):
 
     prefix, dtype, _ = find_best_blas_type(arrays, dtype)
 
-    func = getattr(_fegrss, f"{prefix}{name}")
+    func = getattr(_egrss, f"{prefix}{name}")
     if func is None:
         raise ValueError(f"Function {name} not found in the EGRSS module")
 

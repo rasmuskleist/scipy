@@ -15,11 +15,10 @@ def solve_triangular(u, vh, d, b):
 
     # Get the function
     trsv = get_egrss_func('trsv', (u, vh, d, b))
-    print(trsv.__doc__)
 
+    x = np.copy(b, order='F')
     # Solve the triangular system
-    x = trsv("L", "N", u, vh, d, b, n = 4, m = 2)
+    trsv("L", "N", u, vh, d, x)
 
-    print(x)
     return x
 
