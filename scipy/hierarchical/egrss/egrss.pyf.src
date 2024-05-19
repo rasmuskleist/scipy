@@ -15,7 +15,7 @@ python module _egrss
             double precision dimension(p,n),depend(n,p) :: vt
             double precision dimension(n),depend(n) :: d
             double precision dimension(n),depend(n) :: b
-            double precision dimension(n),depend(n) :: b
+            double precision dimension(n),depend(n), intent(in,out,copy,out=x) :: b
             double precision dimension(lwork),intent(hide,cache),depend(lwork) :: work
             integer optional,intent(in),depend(p) :: lwork = p
             integer intent(out) :: info

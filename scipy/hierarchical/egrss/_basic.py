@@ -2,7 +2,7 @@ import numpy as np
 from .egrss import get_egrss_func
 from scipy.linalg import LinAlgError
 
-def solve_triangular(u, vh, d, b, trans=0, lower=False):
+def solve_triangular(u, vh, d, b, trans=0, lower=False, overwrite_b=False):
     """
     Solve a triangular system of equations.
 
@@ -20,10 +20,10 @@ def solve_triangular(u, vh, d, b, trans=0, lower=False):
     # Get the function
     trsv = get_egrss_func('trsv', (u, vh, d, b))
 
-    x = np.copy(b, order='F')
+    #x = np.copy(b, order='F')
 
     # Solve the triangular system
-    info = trsv(uplo, trans, u, vh, d, x)
+    x, info = trsv(uplo, trans, u, vh, d, b, overwrite_b=overwrite_b)
 
     if info == 0:
         return x
