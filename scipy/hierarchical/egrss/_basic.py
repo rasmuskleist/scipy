@@ -20,8 +20,6 @@ def solve_triangular(u, vh, d, b, trans=0, lower=False, overwrite_b=False):
     # Get the function
     trsv = get_egrss_func('trsv', (u, vh, d, b))
 
-    #x = np.copy(b, order='F')
-
     # Solve the triangular system
     x, info = trsv(uplo, trans, u, vh, d, b, overwrite_b=overwrite_b)
 

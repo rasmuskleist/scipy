@@ -17,13 +17,9 @@ from scipy.hierarchical.egrss import solve_triangular
 from scipy.linalg._testutils import assert_no_overwrite
 from scipy._lib._testutils import check_free_memory, IS_MUSL
 from scipy.linalg.blas import HAS_ILP64
-from scipy.hierarchical.egrss._egrss import fib, dtrsv
+from scipy.hierarchical.egrss._egrss import dtrsv
 
 class TestSolveTriangular:
-
-    def test_fib(self):
-        assert_equal(fib(8), [0, 1, 1, 2, 3, 5, 8, 13])
-
     def test_simple(self):
         """
         solve_triangular on a simple 2x2 matrix.

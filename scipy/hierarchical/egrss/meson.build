@@ -1,6 +1,5 @@
 egrss_sources = [
   'src/dtrsv.f',
-  'src/fib.f',
 ]
 
 # Building ARPACK yields a ton of rank mismatch (scalar and rank-1) warnings
