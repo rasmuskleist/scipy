@@ -1,22 +1,33 @@
-fegrss_source = [
-    'src/dtrmm.f90',
-    'src/dtrmv.f90',
-    'src/dtrsm.f90',
-    'src/dtrsv.f90',
+egrss_sources = [
+  'src/fib.f',
 ]
 
-fegrss_module = custom_target('_fegrss_module',
-    input : fegrss_source,
-    output : ['_fegrssmodule.c', '_fegrss-f2pywrappers.f'],
-    command : [py3, '-m', 'numpy.f2py', '@INPUT@', '-m', '_fegrss', '--lower', '--build-dir', '@OUTDIR@'],
+# Building ARPACK yields a ton of rank mismatch (scalar and rank-1) warnings
+# that cannot be suppressed with a more specific flag.
+_suppress_all_warnings = ff.get_supported_arguments('-w')
+
+egrss_lib = static_library('egrss_lib',
+  egrss_sources,
+  fortran_args: [fortran_ignore_warnings, _suppress_all_warnings],
+  include_directories: ['src'],
+  override_options: ['b_lto=false'],
+  gnu_symbol_visibility: 'hidden',
 )
 
-py3.extension_module('_fegrss',
-    fegrss_module,
-    link_args: version_link_args,
-    dependencies: [lapack_dep, blas_dep, fortranobject_dep],
-    install: true,
-    subdir: 'scipy/hierarchical/egrss'
+egrss_module = custom_target('egrss_module',
+  output: ['_egrssmodule.c', '_egrss-f2pywrappers.f'],
+  input: 'egrss.pyf.src',
+  command: [generate_f2pymod, '@INPUT@', '-o', '@OUTDIR@']
+)
+
+_egrss = py3.extension_module('_egrss',
+  egrss_module,
+  link_with: egrss_lib,
+  link_args: version_link_args,
+  dependencies: [lapack_dep, blas_dep, fortranobject_dep],
+  install: true,
+  link_language: 'fortran',
+  subdir: 'scipy/hierarchical/egrss'
 )
 
 python_sources = [
@@ -27,8 +38,8 @@ python_sources = [
 ]
 
 py3.install_sources(
-  python_sources,
-  subdir: 'scipy/hierarchical/egrss',
+    python_sources,
+    subdir: 'scipy/hierarchical/egrss',
 )
 
 subdir('tests')
