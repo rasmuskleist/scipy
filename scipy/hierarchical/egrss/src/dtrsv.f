@@ -17,7 +17,10 @@
       LOGICAL LSAME
       EXTERNAL LSAME
 *     ..
-*
+*     .. External Subroutines ..
+      EXTERNAL XERBLA
+*     ..
+
 *     Test the input parameters.
 *
       INFO = 0
@@ -28,6 +31,11 @@
           INFO = 2
       ELSE IF (N.LT.0) THEN
           INFO = 4
+      END IF
+
+      IF (INFO.NE.0) THEN
+          CALL XERBLA('DTRSV ',INFO)
+          RETURN
       END IF
 *
 *     Quick return if possible.
