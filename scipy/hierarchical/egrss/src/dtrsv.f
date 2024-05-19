@@ -12,14 +12,18 @@
 *     ..
 *     .. Local Arrays ..
       DOUBLE PRECISION Z(P)
-      Z = 0.0
+*     ..
+*     .. External Functions ..
+      LOGICAL LSAME
+      EXTERNAL LSAME
 *
 *     Start the operations. In this version the elements of A are
 *     accessed sequentially with one pass through A.
 *
+      Z = 0.00
       INFO = 0
-      IF (TRANS == 'N') THEN
-          IF (UPLO == 'U') THEN
+      IF (LSAME(TRANS, 'N')) THEN
+          IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
                   B(J) = (B(J) - DOT_PRODUCT(Z, U(J,:))) / D(J)
                   Z = Z + VT(:,J) * B(J)
@@ -31,7 +35,7 @@
               ENDDO
           END IF
       ELSE
-          IF (UPLO == 'U') THEN
+          IF (LSAME(UPLO, 'U')) THEN
               DO J = N, 1, -1
                   B(J) = (B(J) - DOT_PRODUCT(Z, VT(J,:))) / D(J)
                   Z = Z + U(:,J) * B(J)
