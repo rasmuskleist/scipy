@@ -20,6 +20,7 @@
 *     ..
 *     .. External Subroutines ..
       EXTERNAL DAXPY
+      EXTERNAL DCOPY
       EXTERNAL XERBLA
 *     ..
 
@@ -48,7 +49,6 @@
 *     Start the operations. In this version the elements of A are
 *     accessed sequentially with one pass through A.
 *
-      Z = 0.00
       INFO = 0
       CALL DCOPY(P, 0.0D0, 0, Z, 1)
       IF (LSAME(TRANS, 'N')) THEN
