@@ -135,7 +135,7 @@
 *  =====================================================================
 *
 *     .. Local Scalars ..
-      INTEGER I,J,K
+      INTEGER I,ID,J,K,KD
 *     ..
 *     .. External Functions ..
       LOGICAL LSAME
@@ -166,6 +166,15 @@
 *
       IF (M.EQ.0 .OR. N.EQ.0 .OR. P.EQ.0) RETURN
 *
+*     Set up the start point in X if the increment is not unity. This
+*     will be  ( N - 1 )*INCX  too small for descending loops.
+*
+      IF (INCX.LE.0) THEN
+          KD = 1 - (N-1)*INCX
+      ELSE
+          KD = 1
+      END IF
+*
 *     Start the operations. In this version the elements of A are
 *     accessed sequentially with one pass through A.
 *
@@ -175,7 +184,8 @@
 *
           IF (LSAME(UPLO, 'U')) THEN
               DO J = 1, N
-                  B(M,J) = B(M,J) / D(M)
+                  ID = KD + (M-1)*INCD
+                  B(M,J) = B(M,J) / D(ID)
                   DO K = 1, P
                       WORK(K) = B(M,J) * VT(K,M)
                   ENDDO
@@ -183,7 +193,8 @@
                       DO K = 1, P
                           B(I,J) = B(I,J) - U(I,K) * WORK(K)
                       ENDDO
-                      B(I,J) = B(I,J) / D(I)
+                      ID = ID - INCD
+                      B(I,J) = B(I,J) / D(ID)
                       DO K = 1, P
                           WORK(K) = WORK(K) + B(I,J) * VT(K,I)
                       ENDDO
@@ -191,7 +202,8 @@
               ENDDO
           ELSE
               DO J = 1, N
-                  B(1,J) = B(1,J) / D(1)
+                  ID = KD
+                  B(1,J) = B(1,J) / D(ID)
                   DO K = 1, P
                       WORK(K) = B(1,J) * VT(K,1)
                   ENDDO
@@ -199,7 +211,8 @@
                       DO K = 1, P
                           B(I,J) = B(I,J) - U(I,K) * WORK(K)
                       ENDDO
-                      B(I,J) = B(I,J) / D(I)
+                      ID = ID + INCD
+                      B(I,J) = B(I,J) / D(ID)
                       DO K = 1, P
                           WORK(K) = WORK(K) + B(I,J) * VT(K,I)
                       ENDDO
@@ -212,7 +225,8 @@
 *
           IF (LSAME(UPLO, 'U')) THEN
               DO J = 1, N
-                  B(1,J) = B(1,J) / D(1)
+                  ID = KD
+                  B(1,J) = B(1,J) / D(KD)
                   DO K = 1, P
                       WORK(K) = B(1,J) * U(1,K)
                   ENDDO
@@ -220,7 +234,8 @@
                       DO K = 1, P
                           B(I,J) = B(I,J) - VT(K,I) * WORK(K)
                       ENDDO
-                      B(I,J) = B(I,J) / D(I)
+                      ID = ID + INCD
+                      B(I,J) = B(I,J) / D(ID)
                       DO K = 1, P
                           WORK(K) = WORK(K) + B(I,J) * U(I,K)
                       ENDDO
@@ -228,7 +243,8 @@
               ENDDO
           ELSE
               DO J = 1, N
-                  B(M,J) = B(M,J) / D(M)
+                  ID = KD + (M-1)*INCD
+                  B(M,J) = B(M,J) / D(ID)
                   DO K = 1, P
                       WORK(K) = B(M,J) * U(M,K)
                   ENDDO
@@ -236,7 +252,8 @@
                       DO K = 1, P
                           B(I,J) = B(I,J) - VT(K,I) * WORK(K)
                       ENDDO
-                      B(I,J) = B(I,J) / D(I)
+                      ID = ID - INCD
+                      B(I,J) = B(I,J) / D(ID)
                       DO K = 1, P
                           WORK(K) = WORK(K) + B(I,J) * U(I,K)
                       ENDDO
