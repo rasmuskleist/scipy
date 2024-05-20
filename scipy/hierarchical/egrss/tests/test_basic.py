@@ -37,3 +37,9 @@ class TestSolveTriangular:
         assert_array_almost_equal(A @ x, b)
         assert_array_almost_equal(A.T @ xh, b)
 
+        A = np.triu(U @ Vh, 1) + np.diag(d)
+        x = solve_triangular(U, Vh, d, b, lower=False)
+        xh = solve_triangular(U, Vh, d, b, lower=False, trans=1)
+
+        assert_array_almost_equal(A @ x, b)
+        assert_array_almost_equal(A.T @ xh, b)
