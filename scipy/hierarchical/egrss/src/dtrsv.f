@@ -29,6 +29,8 @@
           INFO = 2
       ELSE IF (N.LT.0) THEN
           INFO = 4
+      ELSE IF (LDU.LT.MAX(1,N) .OR. LDVT.LT.MAX(1,P)) THEN
+          INFO = 6
       END IF
 
       IF (INFO.NE.0) THEN
