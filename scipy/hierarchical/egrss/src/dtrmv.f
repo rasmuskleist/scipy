@@ -206,7 +206,13 @@
           IF (LSAME(UPLO, 'U')) THEN
               JX = KX + (N-1)*INCX
               JD = KD + (N-1)*INCD
-              DO J = N, 1, -1
+              DO I = 1, P
+                  WORK(I) = X(JX) * VT(I, N)
+              ENDDO
+              X(JX) = X(JX) * D(JD)
+              DO J = N - 1, 1, -1
+                  JX = JX - INCX
+                  JD = JD - INCD
                   TEMP = X(JX) * D(JD)
                   DO I = 1, P
                       TEMP = TEMP + WORK(I) * U(J, I)
@@ -215,13 +221,17 @@
                       WORK(I) = WORK(I) + X(JX) * VT(I, J)
                   ENDDO
                   X(JX) = TEMP
-                  JX = JX - INCX
-                  JD = JD - INCD
               ENDDO
           ELSE
               JX = KX
               JD = KD
-              DO J = 1, N
+              DO I = 1, P
+                  WORK(I) = X(JX) * VT(I, 1)
+              ENDDO
+              X(JX) = X(JX) * D(JD)
+              DO J = 2, N
+                  JX = JX + INCX
+                  JD = JD + INCD
                   TEMP = X(JX) * D(JD)
                   DO I = 1, P
                       TEMP = TEMP + WORK(I) * U(J, I)
@@ -230,8 +240,6 @@
                       WORK(I) = WORK(I) + X(JX) * VT(I, J)
                   ENDDO
                   X(JX) = TEMP
-                  JX = JX + INCX
-                  JD = JD + INCD
               ENDDO
           END IF
       ELSE
