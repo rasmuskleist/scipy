@@ -17,7 +17,7 @@ from scipy.hierarchical.egrss import solve_triangular
 from scipy.linalg._testutils import assert_no_overwrite
 from scipy._lib._testutils import check_free_memory, IS_MUSL
 from scipy.linalg.blas import HAS_ILP64
-from scipy.hierarchical.egrss._egrss import dtrmv, dtrsv
+from scipy.hierarchical.egrss._egrss import dtrmv, dtrsm
 
 class TestSolveTriangular:
     def test_multiply(self):
@@ -63,3 +63,25 @@ class TestSolveTriangular:
 
         assert_array_almost_equal(A @ x, b)
         assert_array_almost_equal(A.T @ xh, b)
+
+    def test_dtrsm(self):
+        U = np.random.randn(16, 8)
+        Vh = np.random.randn(8, 16)
+        d = np.ones(16)
+        b = np.random.randn(16)
+
+        A = np.tril(U @ Vh, -1) + np.diag(d)
+        x = dtrsm('L','N',U, Vh, d, b)
+        xh = dtrsm('L','T',U, Vh, d, b)
+
+        assert_array_almost_equal(A @ x, b)
+        assert_array_almost_equal(A.T @ xh, b)
+
+        A = np.triu(U @ Vh, 1) + np.diag(d)
+        x = dtrsm('U','N',U, Vh, d, b)
+        xh = dtrsm('U','T',U, Vh, d, b)
+
+        assert_array_almost_equal(A @ x, b)
+        assert_array_almost_equal(A.T @ xh, b)
+
+
