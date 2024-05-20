@@ -26,7 +26,9 @@
 *>    A*x = b,   or   A**T*x = b,
 *>
 *> where b and x are n element vectors and A is an n by n unit, or
-*> non-unit, upper or lower triangular matrix on extended generator form.
+*> non-unit, upper or lower triangular matrix on extended generator form
+*>
+*>    A = tril(U*V**T,-1) + diag(D) or A = triu(U*V**T,1) + diag(D),
 *>
 *> No test for singularity or near-singularity is included in this
 *> routine. Such tests must be performed before calling this routine.
@@ -62,14 +64,21 @@
 *> \param[in] M
 *> \verbatim
 *>          M is INTEGER
-*>           On entry, M specifies the order of the matrix A.
-*>           M must be at least zero.
+*>           On entry, M specifies the number of rows of B. M must be at
+*>           least zero.
+*> \endverbatim
+*>
+*> \param[in] N
+*> \verbatim
+*>          N is INTEGER
+*>           On entry, N specifies the number of columns of B.  N must be
+*>           at least zero.
 *> \endverbatim
 *>
 *> \param[in] P
 *> \verbatim
 *>          P is INTEGER
-*>           On entry, P specifies the order of the matrix A.
+*>           On entry, P specifies the semiseperability rank of the matrix A.
 *>           P must be at least zero.
 *> \endverbatim
 *>
@@ -96,7 +105,61 @@
 *>           max( 1, n ).
 *> \endverbatim
 *>
-*> \param[in,out] X
+*> \param[in] V
+*> \verbatim
+*>          U is DOUBLE PRECISION array, dimension ( LDV, M )
+*>           Before entry with  UPLO = 'U' or 'u', the leading n by n
+*>           upper triangular part of the array A must contain the upper
+*>           triangular matrix and the strictly lower triangular part of
+*>           A is not referenced.
+*>           Before entry with UPLO = 'L' or 'l', the leading n by n
+*>           lower triangular part of the array A must contain the lower
+*>           triangular matrix and the strictly upper triangular part of
+*>           A is not referenced.
+*>           Note that when  DIAG = 'U' or 'u', the diagonal elements of
+*>           A are not referenced either, but are assumed to be unity.
+*> \endverbatim
+*>
+*> \param[in] LDVT
+*> \verbatim
+*>          LDVT is INTEGER
+*>           On entry, LDVT specifies the first dimension of VT as declared
+*>           in the calling (sub) program. LDVT must be at least
+*>           max( 1, p ).
+*> \endverbatim
+*>
+*> \param[in] D
+*> \verbatim
+*>          D is DOUBLE PRECISION array, dimension at least
+*>           ( 1 + ( n - 1 )*abs( INCX ) ).
+*>           Before entry, the incremented array D must contain the n
+*>           element right-hand side vector b. On exit, X is overwritten
+*>           with the solution vector x.
+*> \endverbatim
+*>
+*> \param[in] INCD
+*> \verbatim
+*>          INCD is INTEGER
+*>           On entry, INCD specifies the increment for the elements of
+*>           D. INCD must not be zero.
+*>
+*> \param[in,out] B
+*> \verbatim
+*>          B is DOUBLE PRECISION array, dimension ( LDB, N )
+*>           Before entry,  the leading  m by n part of the array  B must
+*>           contain  the  right-hand  side  matrix  B,  and  on exit  is
+*>           overwritten by the solution matrix  X.
+*> \endverbatim
+*>
+*> \param[in] LDB
+*> \verbatim
+*>          LDB is INTEGER
+*>           On entry, LDB specifies the first dimension of B as declared
+*>           in  the  calling  (sub)  program.   LDB  must  be  at  least
+*>           max( 1, m ).
+*> \endverbatim
+*>
+*> \param[in,out] WORK
 *> \verbatim
 *>          X is DOUBLE PRECISION array, dimension at least
 *>           ( 1 + ( n - 1 )*abs( INCX ) ).
@@ -105,11 +168,12 @@
 *>           with the solution vector x.
 *> \endverbatim
 *>
-*> \param[in] INCX
+*> \param[in] LWORK
 *> \verbatim
 *>          INCX is INTEGER
 *>           On entry, INCX specifies the increment for the elements of
 *>           X. INCX must not be zero.
+*> \endverbatim
 *
 *  Authors:
 *  ========
