@@ -26,7 +26,7 @@
 *>    A*x = b,   or   A**T*x = b,
 *>
 *> where b and x are n element vectors and A is an n by n unit, or
-*> non-unit, upper or lower triangular matrix.
+*> non-unit, upper or lower triangular matrix on extended generator form.
 *>
 *> No test for singularity or near-singularity is included in this
 *> routine. Such tests must be performed before calling this routine.
@@ -59,18 +59,6 @@
 *>              TRANS = 'C' or 'c'   A**T*x = b.
 *> \endverbatim
 *>
-*> \param[in] DIAG
-*> \verbatim
-*>          DIAG is CHARACTER*1
-*>           On entry, DIAG specifies whether or not A is unit
-*>           triangular as follows:
-*>
-*>              DIAG = 'U' or 'u'   A is assumed to be unit triangular.
-*>
-*>              DIAG = 'N' or 'n'   A is not assumed to be unit
-*>                                  triangular.
-*> \endverbatim
-*>
 *> \param[in] N
 *> \verbatim
 *>          N is INTEGER
@@ -78,9 +66,16 @@
 *>           N must be at least zero.
 *> \endverbatim
 *>
-*> \param[in] A
+*> \param[in] P
 *> \verbatim
-*>          A is DOUBLE PRECISION array, dimension ( LDA, N )
+*>          P is INTEGER
+*>           On entry, P specifies the order of the matrix A.
+*>           P must be at least zero.
+*> \endverbatim
+*>
+*> \param[in] U
+*> \verbatim
+*>          U is DOUBLE PRECISION array, dimension ( LDU, P )
 *>           Before entry with  UPLO = 'U' or 'u', the leading n by n
 *>           upper triangular part of the array A must contain the upper
 *>           triangular matrix and the strictly lower triangular part of
@@ -93,11 +88,11 @@
 *>           A are not referenced either, but are assumed to be unity.
 *> \endverbatim
 *>
-*> \param[in] LDA
+*> \param[in] LDU
 *> \verbatim
-*>          LDA is INTEGER
-*>           On entry, LDA specifies the first dimension of A as declared
-*>           in the calling (sub) program. LDA must be at least
+*>          LDU is INTEGER
+*>           On entry, LDU specifies the first dimension of U as declared
+*>           in the calling (sub) program. LDU must be at least
 *>           max( 1, n ).
 *> \endverbatim
 *>
@@ -115,15 +110,6 @@
 *>          INCX is INTEGER
 *>           On entry, INCX specifies the increment for the elements of
 *>           X. INCX must not be zero.
-*>
-*>  Level 2 Blas routine.
-*>
-*>  -- Written on 22-October-1986.
-*>     Jack Dongarra, Argonne National Lab.
-*>     Jeremy Du Croz, Nag Central Office.
-*>     Sven Hammarling, Nag Central Office.
-*>     Richard Hanson, Sandia National Labs.
-*> \endverbatim
 *
 *  Authors:
 *  ========
