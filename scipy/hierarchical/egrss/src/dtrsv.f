@@ -1,7 +1,8 @@
-      SUBROUTINE DTRSV(UPLO,TRANS,N,P,U,LDU,VT,LDVT,D,B,WORK,LWORK,INFO)
+      SUBROUTINE DTRSV(UPLO,TRANS,N,P,U,LDU,VT,LDVT,D,INCD,B,INCB,WORK,
+     + LWORK,INFO)
 *
 *     .. Scalar Arguments ..
-      INTEGER INFO,LDU,LDVT,LWORK,N,P
+      INTEGER INCB,INCD,INFO,LDU,LDVT,LWORK,N,P
       CHARACTER TRANS,UPLO
 *     ..
 *     .. Array Arguments ..
@@ -31,6 +32,10 @@
           INFO = 4
       ELSE IF (LDU.LT.MAX(1,N) .OR. LDVT.LT.MAX(1,P)) THEN
           INFO = 6
+      ELSE IF (INCB.EQ.0 .OR. INCD.EQ.0) THEN
+          INFO = 8
+      ELSE IF (LWORK.LT.MAX(1,P)) THEN
+          INFO = 12
       END IF
 
       IF (INFO.NE.0) THEN
