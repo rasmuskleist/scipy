@@ -27,7 +27,7 @@
       ELSE IF (.NOT.LSAME(TRANS,'N') .AND. .NOT.LSAME(TRANS,'T') .AND.
      + .NOT.LSAME(TRANS,'C')) THEN
           INFO = 2
-      ELSE IF (N.LT.0) THEN
+      ELSE IF (N.LT.0 .OR. P.LT.0) THEN
           INFO = 4
       ELSE IF (LDU.LT.MAX(1,N) .OR. LDVT.LT.MAX(1,P)) THEN
           INFO = 6
@@ -40,7 +40,7 @@
 *
 *     Quick return if possible.
 *
-      IF (N.EQ.0) RETURN
+      IF (N.EQ.0 .OR. P.EQ.0) RETURN
 
 *
 *     Start the operations. In this version the elements of A are
