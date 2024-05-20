@@ -193,7 +193,7 @@
       CHARACTER TRANS,UPLO
 *     ..
 *     .. Array Arguments ..
-      DOUBLE PRECISION B(LDB,*), D(*), U(LDU,*), VT(LDVT,*), WORK(LWORK)
+      DOUBLE PRECISION B(LDB,*), D(*), U(LDU,*), VT(LDVT,*), WORK(*)
 *     ..
 *ª
 *  =====================================================================
@@ -220,6 +220,8 @@
      + .NOT.LSAME(TRANS,'T') .AND.
      + .NOT.LSAME(TRANS,'C')) THEN
           INFO = 2
+      ELSE IF (LWORK.LT.MAX(1,P)) THEN
+          INFO = 13
       END IF
       IF (INFO.NE.0) THEN
           CALL XERBLA('DTRSM ',INFO)
