@@ -1,11 +1,11 @@
-      SUBROUTINE DTRSV(UPLO,TRANS,N,P,U,VT,D,B,WORK,LWORK,INFO)
+      SUBROUTINE DTRSV(UPLO,TRANS,N,P,U,LDU,VT,LDVT,D,B,WORK,LWORK,INFO)
 *
 *     .. Scalar Arguments ..
       INTEGER INFO,LWORK,N,P
       CHARACTER TRANS,UPLO
 *     ..
 *     .. Array Arguments ..
-      DOUBLE PRECISION D(*), U(N,*), VT(P,*), B(*), WORK(*)
+      DOUBLE PRECISION D(*), U(LDU,*), VT(LDVT,*), B(*), WORK(*)
 *     ..
 *
 *  =====================================================================

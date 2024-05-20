@@ -1,13 +1,16 @@
 !    -*- f90 -*-
 python module _egrss 
     interface ! in :_egrss
-        subroutine dtrsv(uplo,trans,n,p,u,vt,d,b,work,lwork,info)
+        subroutine dtrsv(uplo,trans,n,p,u,ldu,vt,ldvt,d,b,work,lwork,info)
             character :: uplo
             character :: trans
             integer, optional,check(shape(u, 0) == n),depend(u) :: n=shape(u, 0)
             integer, optional,check(shape(u, 1) == p),depend(u) :: p=shape(u, 1)
-            double precision dimension(n,*) :: u
-            double precision dimension(p,*) :: vt
+            integer optional,check(shape(u,0)==ldu),depend(u) :: ldu=shape(u,0)
+            integer optional,check(shape(vt,0)==ldvt),depend(vt) :: ldvt=shape(vt,0)
+
+            double precision dimension(ldu,*) :: u
+            double precision dimension(ldvt,*) :: vt
             double precision dimension(*) :: d
             double precision dimension(*), intent(in,out,copy,out=x) :: b
             double precision dimension(lwork),intent(hide,cache),depend(lwork) :: work
