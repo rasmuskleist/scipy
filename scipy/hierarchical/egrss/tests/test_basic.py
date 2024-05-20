@@ -17,9 +17,29 @@ from scipy.hierarchical.egrss import solve_triangular
 from scipy.linalg._testutils import assert_no_overwrite
 from scipy._lib._testutils import check_free_memory, IS_MUSL
 from scipy.linalg.blas import HAS_ILP64
-from scipy.hierarchical.egrss._egrss import dtrsv
+from scipy.hierarchical.egrss._egrss import dtrmv, dtrsv
 
 class TestSolveTriangular:
+    def test_multiply(self):
+        U = np.random.randn(16, 8)
+        Vh = np.random.randn(8, 16)
+        d = np.ones(16)
+        x = np.random.randn(16)
+
+        A = np.tril(U @ Vh, -1) + np.diag(d)
+        y, info = dtrmv('L', 'N', U, Vh, d, x)
+        yh, info = dtrmv('L', 'T', U, Vh, d, x)
+
+        assert_array_almost_equal(A @ x, y)
+        assert_array_almost_equal(A.T @ x, yh)
+
+        A = np.triu(U @ Vh, 1) + np.diag(d)
+        y, info = dtrmv('U', 'N', U, Vh, d, x)
+        yh, info = dtrmv('U', 'T', U, Vh, d, x)
+
+        assert_array_almost_equal(A @ x, y)
+        assert_array_almost_equal(A.T @ x, yh)
+
     def test_simple(self):
         """
         solve_triangular on a simple 2x2 matrix.
