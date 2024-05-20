@@ -156,7 +156,6 @@
       EXTERNAL LSAME
 *     ..
 *     .. External Subroutines ..
-      EXTERNAL DCOPY
       EXTERNAL XERBLA
 *     ..
 *     .. Intrinsic Functions ..
@@ -210,14 +209,17 @@
 *     Start the operations. In this version the elements of A are
 *     accessed sequentially with one pass through A.
 *
-      CALL DCOPY(P, 0.0D0, 0, WORK, 1)
       IF (LSAME(TRANS, 'N')) THEN
 *
 *        Form  x := inv( A )*x.
 *
           IF (LSAME(UPLO, 'U')) THEN
               IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  DO J = N, 1, -1
+                  B(N) = B(N) / D(N)
+                  DO I = 1, P
+                      WORK(I) = B(N) * VT(I, N)
+                  ENDDO
+                  DO J = N-1, 1, -1
                       DO I = 1, P
                           B(J) = B(J) - U(J, I) * WORK(I)
                       ENDDO
@@ -230,7 +232,11 @@
               END IF
           ELSE
               IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  DO J = 1, N
+                  B(1) = B(1) / D(1)
+                  DO I = 1, P
+                      WORK(I) = B(1) * VT(I, 1)
+                  ENDDO
+                  DO J = 2, N
                       DO I = 1, P
                           B(J) = B(J) - U(J, I) * WORK(I)
                       ENDDO
@@ -248,7 +254,11 @@
 *
           IF (LSAME(UPLO, 'U')) THEN
               IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  DO J = 1, N
+                  B(1) = B(1) / D(1)
+                  DO I = 1, P
+                      WORK(I) = B(1) * U(1, I)
+                  ENDDO
+                  DO J = 2, N
                       DO I = 1, P
                           B(J) = B(J) - VT(I, J) * WORK(I)
                       ENDDO
@@ -261,7 +271,11 @@
               END IF
           ELSE
               IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  DO J = N, 1, -1
+                  B(N) = B(N) / D(N)
+                  DO I = 1, P
+                      WORK(I) = B(N) * U(N, I)
+                  ENDDO
+                  DO J = N - 1, 1, -1
                       DO I = 1, P
                           B(J) = B(J) - VT(I, J) * WORK(I)
                       ENDDO
