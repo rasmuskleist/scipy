@@ -200,22 +200,23 @@
 *        Form  x := inv( A )*x.
 *
           IF (LSAME(UPLO, 'U')) THEN
-              IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  B(N) = B(N) / D(N)
+              JB = KB + (N-1)*INCB
+              JD = KD + (N-1)*INCD
+              B(JB) = B(JB) / D(JD)
+              DO I = 1, P
+                  WORK(I) = B(JB) * VT(I, N)
+              ENDDO
+              DO J = N-1, 1, -1
+                  JB = JB - INCB
+                  JD = JD - INCD
                   DO I = 1, P
-                      WORK(I) = B(N) * VT(I, N)
+                      B(JB) = B(JB) - U(J, I) * WORK(I)
                   ENDDO
-                  DO J = N-1, 1, -1
-                      DO I = 1, P
-                          B(J) = B(J) - U(J, I) * WORK(I)
-                      ENDDO
-                      B(J) = B(J) / D(J)
-                      DO I = 1, P
-                          WORK(I) = WORK(I) + B(J) * VT(I, J)
-                      ENDDO
+                  B(JB) = B(JB) / D(JD)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(JB) * VT(I, J)
                   ENDDO
-              ELSE
-              END IF
+              ENDDO
           ELSE
               JB = KB
               JD = KD
@@ -258,22 +259,23 @@
                   ENDDO
               ENDDO
           ELSE
-              IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  B(N) = B(N) / D(N)
+              JB = KB + (N-1)*INCB
+              JD = KD + (N-1)*INCD
+              B(JB) = B(JB) / D(JD)
+              DO I = 1, P
+                  WORK(I) = B(JB) * U(N, I)
+              ENDDO
+              DO J = N - 1, 1, -1
+                  JB = JB - INCB
+                  JD = JD - INCD
                   DO I = 1, P
-                      WORK(I) = B(N) * U(N, I)
+                      B(JB) = B(JB) - VT(I, J) * WORK(I)
                   ENDDO
-                  DO J = N - 1, 1, -1
-                      DO I = 1, P
-                          B(J) = B(J) - VT(I, J) * WORK(I)
-                      ENDDO
-                      B(J) = B(J) / D(J)
-                      DO I = 1, P
-                          WORK(I) = WORK(I) + B(J) * U(J, I)
-                      ENDDO
+                  B(JB) = B(JB) / D(JD)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(JB) * U(J, I)
                   ENDDO
-              ELSE
-              END IF
+              ENDDO
           END IF
       END IF
 *
