@@ -1,7 +1,7 @@
       SUBROUTINE DTRSV(UPLO,TRANS,N,P,U,LDU,VT,LDVT,D,B,WORK,LWORK,INFO)
 *
 *     .. Scalar Arguments ..
-      INTEGER INFO,LWORK,N,P
+      INTEGER INFO,LDU,LDVT,LWORK,N,P
       CHARACTER TRANS,UPLO
 *     ..
 *     .. Array Arguments ..
