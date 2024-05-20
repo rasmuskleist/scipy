@@ -179,7 +179,7 @@
 *
       IF (INCB.LE.0) THEN
         KB = 1 - (N-1)*INCB
-      ELSE IF (INCX.NE.1) THEN
+      ELSE
         KB = 1
       END IF
 *
@@ -188,7 +188,7 @@
 *
       IF (INCD.LE.0) THEN
         KD = 1 - (N-1)*INCD
-      ELSE IF (INCX.NE.1) THEN
+      ELSE
         KD = 1
       END IF
 *
@@ -217,44 +217,46 @@
               ELSE
               END IF
           ELSE
-              IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  B(1) = B(1) / D(1)
+              JB = KB
+              JD = KD
+              B(JB) = B(JB) / D(JD)
+              DO I = 1, P
+                  WORK(I) = B(JB) * VT(I, 1)
+              ENDDO
+              DO J = 2, N
+                  JB = JB + INCB
+                  JD = JD + INCD
                   DO I = 1, P
-                      WORK(I) = B(1) * VT(I, 1)
+                      B(JB) = B(JB) - U(JB, I) * WORK(I)
                   ENDDO
-                  DO J = 2, N
-                      DO I = 1, P
-                          B(J) = B(J) - U(J, I) * WORK(I)
-                      ENDDO
-                      B(J) = B(J) / D(J)
-                      DO I = 1, P
-                          WORK(I) = WORK(I) + B(J) * VT(I, J)
-                      ENDDO
+                  B(JB) = B(JB) / D(JD)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(JB) * VT(I, J)
                   ENDDO
-              ELSE
-              END IF
+              ENDDO
           END IF
       ELSE
 *
 *        Form  x := inv( A**T )*x.
 *
           IF (LSAME(UPLO, 'U')) THEN
-              IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
-                  B(1) = B(1) / D(1)
+              JB = KB
+              JD = KD
+              B(JB) = B(JB) / D(JD)
+              DO I = 1, P
+                  WORK(I) = B(JB) * U(1, I)
+              ENDDO
+              DO J = 2, N
+                  JB = JB + INCB
+                  JD = JD + INCD
                   DO I = 1, P
-                      WORK(I) = B(1) * U(1, I)
+                      B(JB) = B(JB) - VT(I, J) * WORK(I)
                   ENDDO
-                  DO J = 2, N
-                      DO I = 1, P
-                          B(J) = B(J) - VT(I, J) * WORK(I)
-                      ENDDO
-                      B(J) = B(J) / D(J)
-                      DO I = 1, P
-                          WORK(I) = WORK(I) + B(J) * U(J, I)
-                      ENDDO
+                  B(JB) = B(JB) / D(JD)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(JB) * U(J, I)
                   ENDDO
-              ELSE
-              END IF
+              ENDDO
           ELSE
               IF (INCB.EQ.1 .AND. INCD.EQ.1) THEN
                   B(N) = B(N) / D(N)
