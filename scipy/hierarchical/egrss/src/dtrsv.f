@@ -15,7 +15,6 @@
       EXTERNAL LSAME
 *     ..
 *     .. External Subroutines ..
-      EXTERNAL DAXPY
       EXTERNAL DCOPY
       EXTERNAL XERBLA
 *     ..
@@ -53,7 +52,9 @@
                       B(J) = B(J) - U(J, I) * WORK(I)
                   ENDDO
                   B(J) = B(J) / D(J)
-                  CALL DAXPY(P, B(J), VT(1, J), 1, WORK, 1)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(J) * VT(I, J)
+                  ENDDO
               ENDDO
           ELSE
               DO J = 1, N
@@ -61,25 +62,31 @@
                       B(J) = B(J) - U(J, I) * WORK(I)
                   ENDDO
                   B(J) = B(J) / D(J)
-                  CALL DAXPY(P, B(J), VT(1, J), 1, WORK, 1)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(J) * VT(I, J)
+                  ENDDO
               ENDDO
           END IF
       ELSE
           IF (LSAME(UPLO, 'U')) THEN
               DO J = 1, N
                   DO I = 1, P
-                    B(J) = B(J) - VT(I, J) * WORK(I)
+                      B(J) = B(J) - VT(I, J) * WORK(I)
                   ENDDO
                   B(J) = B(J) / D(J)
-                  CALL DAXPY(P, B(J), U(J, 1), N, WORK, 1)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(J) * U(J, I)
+                  ENDDO
               ENDDO
           ELSE
               DO J = N, 1, -1
                   DO I = 1, P
-                    B(J) = B(J) - VT(I, J) * WORK(I)
+                      B(J) = B(J) - VT(I, J) * WORK(I)
                   ENDDO
                   B(J) = B(J) / D(J)
-                  CALL DAXPY(P, B(J), U(J, 1), N, WORK, 1)
+                  DO I = 1, P
+                      WORK(I) = WORK(I) + B(J) * U(J, I)
+                  ENDDO
               ENDDO
           END IF
       END IF
