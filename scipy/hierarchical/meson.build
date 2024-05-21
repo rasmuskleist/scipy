@@ -1,6 +1,7 @@
 python_sources = [
     '__init__.py',
     '_hodlr.py',
+    '_partition.py',
     '_sif.py',
 ]
 
