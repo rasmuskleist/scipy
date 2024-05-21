@@ -2,8 +2,8 @@ import numpy as np
 import scipy as sp
 from scipy.linalg.lapack import get_lapack_funcs
 
-from scipy.hierarchical.egrss import trsm
 from scipy.hierarchical import sif, LevelOrderIterator, ReverseLevelOrderIterator
+from scipy.hierarchical.egrss import get_egrss_func
 
 
 def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
@@ -46,7 +46,10 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 xjj = x[j2, :]
 
                 xjjtilde = xjj - aii.u @ (aii.vh @ xii)
-                xjj[:, :] = trsm(-aii.u, aii.wh, aii.c, xjjtilde, trans=trans)
+                trsm = get_egrss_func("trsm", (aii.u, aii.vh, aii.d, xjjtilde), dtype=a.dtype)
+
+                egtrans = {0: "N", 1:"T", 2:"C"}.get(trans, trans)
+                xjj[:, :] = trsm(-aii.u, aii.wh, aii.c, xjjtilde, trans=egtrans)
 
     elif trans == 1:
         btilde = np.copy(b)
@@ -66,7 +69,9 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 biitilde = btilde[j1, :]
                 bjjtilde = btilde[j2, :]
 
-                bjjtilde[:, :] = trsm(-aii.u, aii.wh, aii.c, bjjtilde, trans=trans)
+                egtrans = {0: "N", 1:"T", 2:"C"}.get(trans, trans)
+                trsm = get_egrss_func("trsm", (aii.u, aii.vh, aii.d, bjjtilde), dtype=a.dtype)
+                bjjtilde[:, :] = trsm(-aii.u, aii.wh, aii.c, bjjtilde, trans=egtrans)
                 biitilde[:, :] = biitilde - aii.vh.T.conj() @ (
                     aii.u.T.conj() @ bjjtilde
                 )
