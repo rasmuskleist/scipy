@@ -46,10 +46,10 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 xjj = x[j2, :]
 
                 xjjtilde = xjj - aii.u @ (aii.vh @ xii)
-                trsm = get_egrss_func("trsm", (aii.u, aii.vh, aii.d, xjjtilde), dtype=a.dtype)
+                trsm = get_egrss_func("trsm", dtype=a.dtype)
 
                 egtrans = {0: "N", 1:"T", 2:"C"}.get(trans, trans)
-                xjj[:, :] = trsm(-aii.u, aii.wh, aii.c, xjjtilde, lower=True, trans=egtrans)
+                xjj[:, :] = trsm('L', egtrans, -aii.u, aii.wh, aii.c, xjjtilde)
 
     elif trans == 1:
         btilde = np.copy(b)
@@ -58,7 +58,7 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 xii = x[j, :]
                 biitilde = btilde[j, :]
 
-                trtrs = get_lapack_funcs("trtrs", (aii.d, biitilde), dtype=a.dtype)
+                trtrs = get_lapack_funcs("trtrs", dtype=a.dtype)
                 xii[:, :], info = trtrs(aii.d, biitilde, lower=True, trans=trans)
             else:
                 _, m1 = aii.a11.shape
@@ -70,8 +70,8 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 bjjtilde = btilde[j2, :]
 
                 egtrans = {0: "N", 1:"T", 2:"C"}.get(trans, trans)
-                trsm = get_egrss_func("trsm", (aii.u, aii.vh, aii.d, bjjtilde), dtype=a.dtype)
-                bjjtilde[:, :] = trsm(-aii.u, aii.wh, aii.c, bjjtilde, lower=True, trans=egtrans)
+                trsm = get_egrss_func("trsm", (), dtype=a.dtype)
+                bjjtilde[:, :] = trsm('L', egtrans, -aii.u, aii.wh, aii.c, bjjtilde)
                 biitilde[:, :] = biitilde - aii.vh.T.conj() @ (
                     aii.u.T.conj() @ bjjtilde
                 )
