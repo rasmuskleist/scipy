@@ -1,8 +1,8 @@
 import numpy as np
 import scipy as sp
-from scipy.hierarchical.egrss import get_egrss_func
-from scipy.linalg.lapack import get_lapack_funcs
+from scipy.linalg import solve_triangular as trtrs
 
+from scipy.hierarchical.egrss import trsm
 from scipy.hierarchical import sif, LevelOrderIterator, ReverseLevelOrderIterator
 
 
@@ -22,6 +22,8 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
     x : numpy.ndarray
         Solution vector `x` for the system `ax = b`.
     """
+
+    b = np.atleast_2d(b)
     n, m = a.shape
     p, q = b.shape
 
@@ -31,8 +33,7 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
             if aii.isleaf():
                 xii = x[j, :]
                 bii = b[j, :]
-                trtrs = get_lapack_funcs("trtrs", dtype=a.dtype)
-                xii[:, :], _ = trtrs(aii.d, bii, lower=True, trans=trans)
+                xii[:, :] = trtrs(aii.d, bii, lower=True, trans=trans)
             else:
                 _, m1 = aii.a11.shape
                 _, m2 = aii.a22.shape
@@ -42,19 +43,16 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 xii = x[j1, :]
                 xjj = x[j2, :]
 
-                xjj = xjj - aii.u @ (aii.vh @ xii)
-
-                trsm = get_egrss_func("trsm", dtype=a.dtype)
-                xjj[:,:] = trsm("L", "N", -aii.u, aii.wh, aii.c, xjj)
+                xjjtilde = xjj - aii.u @ (aii.vh @ xii)
+                xjj[:, :] = trsm(-aii.u, aii.wh, aii.c, xjjtilde, trans=trans)
 
     elif trans == 1:
-        btilde = np.copy(b, order="F")
+        btilde = np.copy(b)
         for aii, i, j in LevelOrderIterator(a):
             if aii.isleaf():
                 xii = x[j, :]
                 biitilde = btilde[j, :]
-                trtrs = get_lapack_funcs("trtrs", dtype=a.dtype)
-                xii[:, :], _ = trtrs(aii.d, biitilde, lower=True)
+                xii[:, :] = trtrs(aii.d, biitilde, lower=True, trans=trans)
             else:
                 _, m1 = aii.a11.shape
                 _, m2 = aii.a22.shape
@@ -64,10 +62,8 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 biitilde = btilde[j1, :]
                 bjjtilde = btilde[j2, :]
 
-                trsm = get_egrss_func("trsm", dtype=a.dtype)
-                bjjtilde[:,:] = trsm("L", "T", -aii.u, aii.wh, aii.c, bjjtilde)
-
-                biitilde[:,:] = biitilde - aii.vh.T.conj() @ (
+                bjjtilde[:, :] = trsm(-aii.u, aii.wh, aii.c, bjjtilde, trans=trans)
+                biitilde[:, :] = biitilde - aii.vh.T.conj() @ (
                     aii.u.T.conj() @ bjjtilde
                 )
     else:

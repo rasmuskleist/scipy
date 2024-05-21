@@ -2,12 +2,11 @@ from unittest import TestCase
 
 import numpy as np
 import scipy as sp
-from scipy.linalg import cholesky
 from scipy.sparse import diags
 
+from scipy.hierarchical.operator import LinearOperator, MatrixOperator
 from scipy.hierarchical import LeafIterator, cluster_tree, empty
-from scipy.hierarchical.linalg import solve_triangular
-from scipy.hierarchical.operator import LinearOperator, MatrixOperator, tosif
+from scipy.hierarchical.linalg import cholesky, solve_triangular
 
 
 class Operator(LinearOperator):
@@ -44,14 +43,14 @@ class Operator(LinearOperator):
 
 class TestSif(TestCase):
     def test_cholesky(self):
-        block_size = np.full(2, 4)
+        block_size = np.full(2, 2)
 
         n = np.sum(block_size)
         index_set = np.arange(n)
         t = cluster_tree(index_set, block_size)
 
         n = np.sum(block_size)
-        k = 2
+        k = 1
 
         c = np.full(n, n)
         u = np.random.randn(n, k)
@@ -60,12 +59,8 @@ class TestSif(TestCase):
         a = u @ u.T + np.diag(c)
         op = Operator(u, u.T, d)
 
-        l = tosif(op, t, k)
-        cho = cholesky(a, lower=True)
-
-        print(l.toarray())
-        print(cho)
-
+        l = cholesky(op, t, k)
+        cho = sp.linalg.cholesky(a, lower=True)
         self.assertTrue(np.allclose(l.toarray(), cho))
 
     def test_operator(self):

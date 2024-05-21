@@ -37,6 +37,7 @@ python_sources = [
     '__init__.py',
     '_basic.py',
     '_decomp_cholesky.py',
+    '_egrpack.py',
     'basic.py',
     'egrss.py',
 ]
