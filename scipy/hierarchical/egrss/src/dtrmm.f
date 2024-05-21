@@ -189,7 +189,7 @@
      + LWORK)
 *
 *     .. Scalar Arguments ..
-      INTEGER INCD, LDB,LDU,LDVT,LWORK,M,N,P
+      INTEGER INCD,LDB,LDU,LDVT,LWORK,M,N,P
       CHARACTER TRANS,UPLO
 *     ..
 *     .. Array Arguments ..
@@ -236,8 +236,8 @@
 *     Set up the start point in X if the increment is not unity. This
 *     will be  ( N - 1 )*INCX  too small for descending loops.
 *
-      IF (INCX.LE.0) THEN
-          KD = 1 - (N-1)*INCX
+      IF (INCD.LE.0) THEN
+          KD = 1 - (N-1)*INCD
       ELSE
           KD = 1
       END IF
