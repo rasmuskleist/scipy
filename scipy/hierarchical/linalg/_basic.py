@@ -49,7 +49,7 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
                 trsm = get_egrss_func("trsm", (aii.u, aii.vh, aii.d, xjjtilde), dtype=a.dtype)
 
                 egtrans = {0: "N", 1:"T", 2:"C"}.get(trans, trans)
-                xjj[:, :] = trsm(-aii.u, aii.wh, aii.c, xjjtilde, trans=egtrans)
+                xjj[:, :] = trsm(-aii.u, aii.wh, aii.c, xjjtilde, lower=True, trans=egtrans)
 
     elif trans == 1:
         btilde = np.copy(b)
@@ -71,7 +71,7 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
 
                 egtrans = {0: "N", 1:"T", 2:"C"}.get(trans, trans)
                 trsm = get_egrss_func("trsm", (aii.u, aii.vh, aii.d, bjjtilde), dtype=a.dtype)
-                bjjtilde[:, :] = trsm(-aii.u, aii.wh, aii.c, bjjtilde, trans=egtrans)
+                bjjtilde[:, :] = trsm(-aii.u, aii.wh, aii.c, bjjtilde, lower=True, trans=egtrans)
                 biitilde[:, :] = biitilde - aii.vh.T.conj() @ (
                     aii.u.T.conj() @ bjjtilde
                 )
