@@ -1,1 +1,1 @@
-from .decomp_rsvds import rsvds
+from ._decomp_rsvds import rsvds

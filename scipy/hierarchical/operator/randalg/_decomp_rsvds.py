@@ -2,7 +2,7 @@ import numpy as np
 from scipy.linalg import norm, qr
 from scipy.sparse.linalg import svds
 
-from hmpy.operator import LinearOperator
+from scipy.hierarchical.operator import LinearOperator
 
 
 def _rsvds(a: LinearOperator, eps=1e-6, p=1, r=5):

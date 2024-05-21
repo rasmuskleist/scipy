@@ -1,2 +1,2 @@
-from .operator import LinearOperator, LowRankOperator, MatrixOperator
-from .utils import tosif
+from ._operator import LinearOperator, LowRankOperator, MatrixOperator
+from ._utils import tosif

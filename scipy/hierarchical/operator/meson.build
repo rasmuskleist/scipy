@@ -1,13 +1,14 @@
 python_sources = [
   '__init__.py',
-  'operator.py',
-  'utils.py',
+  '_operator.py',
+  '_utils.py',
 ]
 
 py3.install_sources(
   python_sources,
   pure: false,
-  subdir: 'hmpy/operator'
+  subdir: 'scipy/hierarchical/operator'
 )
 
 subdir('randalg')
+subdir('tests')

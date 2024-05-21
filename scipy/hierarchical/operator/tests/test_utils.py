@@ -5,9 +5,9 @@ import scipy as sp
 from scipy.linalg import cholesky
 from scipy.sparse import diags
 
-from hmpy.hieraichal import LeafIterator, cluster_tree, empty
-from hmpy.hieraichal.linalg import solve_triangular
-from hmpy.operator import LinearOperator, MatrixOperator, tosif
+from scipy.hierarchical import LeafIterator, cluster_tree, empty
+from scipy.hierarchical.linalg import solve_triangular
+from scipy.hierarchical.operator import LinearOperator, MatrixOperator, tosif
 
 
 class Operator(LinearOperator):

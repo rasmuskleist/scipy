@@ -1,15 +1,15 @@
 import numpy as np
 from scipy.linalg import get_lapack_funcs
 
-from hmpy.egrss import cholesky
-from hmpy.hieraichal import SIF, Partition, ReverseLevelOrderIterator, empty
-from hmpy.hieraichal.linalg import solve_triangular
-from hmpy.operator import LinearOperator
-from hmpy.operator.randalg import rsvds
+from scipy.hierarchical.egrss import cholesky
+from scipy.hierarchical import sif, Partition, ReverseLevelOrderIterator, empty
+from scipy.hierarchical.linalg import solve_triangular
+from scipy.hierarchical.operator import LinearOperator
+from scipy.hierarchical.operator.randalg import rsvds
 
 
 class _PreconditionedMatrix(LinearOperator):
-    def __init__(self, a: LinearOperator, l1: SIF, l2: SIF) -> SIF:
+    def __init__(self, a: LinearOperator, l1: sif, l2: sif) -> sif:
         self.a = a
         self.l1 = l1
         self.l2 = l2
@@ -38,7 +38,7 @@ class _PreconditionedMatrix(LinearOperator):
         return solve_triangular(self.l1, xtilde, trans=0)
 
 
-def tosif(a: LinearOperator, t: Partition, k, r=5) -> SIF:
+def tosif(a: LinearOperator, t: Partition, k, r=5) -> sif:
     """
     Compute the Cholesky factorization of a symmetric positive definite matrix.
 
@@ -57,7 +57,7 @@ def tosif(a: LinearOperator, t: Partition, k, r=5) -> SIF:
 
     Returns
     -------
-    SIF
+    sif
         The Cholesky factorization of the matrix.
 
     Notes
