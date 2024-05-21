@@ -10,4 +10,5 @@ py3.install_sources(
 )
 
 subdir('egrss')
+subdir('operator')
 subdir('tests')
