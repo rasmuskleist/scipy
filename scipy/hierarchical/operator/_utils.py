@@ -1,11 +1,11 @@
 import numpy as np
-from scipy.linalg import get_lapack_funcs
+from scipy.linalg.lapack import get_lapack_funcs
 
-from scipy.hierarchical.egrss import cholesky
-from scipy.hierarchical import sif, Partition, ReverseLevelOrderIterator, empty
-from scipy.hierarchical.linalg import solve_triangular
+from scipy.hierarchical.egrss import potrf as egrss_potrf
 from scipy.hierarchical.operator import LinearOperator
+from scipy.hierarchical import sif, Partition, ReverseLevelOrderIterator, empty
 from scipy.hierarchical.operator.randalg import rsvds
+from scipy.hierarchical.linalg import solve_triangular
 
 
 class _PreconditionedMatrix(LinearOperator):
@@ -91,7 +91,7 @@ def tosif(a: LinearOperator, t: Partition, k, r=5) -> sif:
             u, s, vh = rsvds(a21, k=k, r=r)
 
             u = u * s
-            wh, c = cholesky(-u, u.T.conj(), np.ones(n2))
+            wh, c = egrss_potrf(-u, u.T.conj(), np.ones(n2))
 
             li.u = u
             li.vh = vh

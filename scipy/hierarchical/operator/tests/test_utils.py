@@ -4,9 +4,9 @@ import numpy as np
 import scipy as sp
 from scipy.sparse import diags
 
-from scipy.hierarchical.operator import LinearOperator, MatrixOperator
+from scipy.hierarchical.operator import LinearOperator, MatrixOperator, tosif
 from scipy.hierarchical import LeafIterator, cluster_tree, empty
-from scipy.hierarchical.linalg import cholesky, solve_triangular
+from scipy.hierarchical.linalg import solve_triangular
 
 
 class Operator(LinearOperator):
@@ -59,7 +59,7 @@ class TestSif(TestCase):
         a = u @ u.T + np.diag(c)
         op = Operator(u, u.T, d)
 
-        l = cholesky(op, t, k)
+        l = tosif(op, t, k)
         cho = sp.linalg.cholesky(a, lower=True)
         self.assertTrue(np.allclose(l.toarray(), cho))
 
