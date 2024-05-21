@@ -75,7 +75,7 @@ class sif:
 
                 a[i11, j22] = 0
                 a[i22, j11] = a21
-                a[i22, j22] = np.asfortranarray(a22h.T.conj())
+                a[i22, j22] = a22h.T.conj()
 
         return a
 
