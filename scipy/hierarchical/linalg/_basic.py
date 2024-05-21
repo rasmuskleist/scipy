@@ -1,6 +1,6 @@
 import numpy as np
 import scipy as sp
-from scipy.linalg import solve_triangular as trtrs
+from scipy.linalg.lapack import get_lapack_funcs
 
 from scipy.hierarchical.egrss import trsm
 from scipy.hierarchical import sif, LevelOrderIterator, ReverseLevelOrderIterator
@@ -33,7 +33,9 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
             if aii.isleaf():
                 xii = x[j, :]
                 bii = b[j, :]
-                xii[:, :] = trtrs(aii.d, bii, lower=True, trans=trans)
+
+                trtrs = get_lapack_funcs("trtrs", (aii.d, bii), dtype=a.dtype)
+                xii[:, :], info = trtrs(aii.d, bii, lower=True, trans=trans)
             else:
                 _, m1 = aii.a11.shape
                 _, m2 = aii.a22.shape
@@ -52,7 +54,9 @@ def solve_triangular(a: sif, b: np.ndarray, trans: int = 0) -> np.ndarray:
             if aii.isleaf():
                 xii = x[j, :]
                 biitilde = btilde[j, :]
-                xii[:, :] = trtrs(aii.d, biitilde, lower=True, trans=trans)
+
+                trtrs = get_lapack_funcs("trtrs", (aii.d, biitilde), dtype=a.dtype)
+                xii[:, :], info = trtrs(aii.d, biitilde, lower=True, trans=trans)
             else:
                 _, m1 = aii.a11.shape
                 _, m2 = aii.a22.shape
