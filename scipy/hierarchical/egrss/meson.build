@@ -36,6 +36,7 @@ _egrss = py3.extension_module('_egrss',
 python_sources = [
     '__init__.py',
     '_basic.py',
+    '_decomp_cholesky.py',
     'basic.py',
     'egrss.py',
 ]
