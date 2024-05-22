@@ -121,8 +121,8 @@
 *> \ingroup double_blas_level1
 *
 *  =====================================================================
-      SUBROUTINE DTRTRS(UPLO,TRANS,N,P,NRHS,U,LDU,VT,LDVT,D,INCD,B,LDB,WORK,
-     + LWORK,INFO)
+      SUBROUTINE DTRTRS(UPLO,TRANS,N,P,NRHS,U,LDU,VT,LDVT,D,INCD,B,LDB,
+     $                  WORK,LWORK,INFO)
 *
 *     .. Scalar Arguments ..
       INTEGER INCD,INFO,LDB,LDU,LDVT,LWORK,N,NRHS,P
@@ -188,8 +188,8 @@
 *
 *     Solve A * x = b  or  A**T * x = b.
 *
-      CALL DTRSM(UPLO,TRANS,N,NRHS,P,U,LDU,VT,LDVT,D,INCD,B,LDB,WORK,
-     + LWORK)
+      CALL DTRSM(UPLO,TRANS,N,NRHS,P,U,LDU,VT,LDVT,D,INCD,B,LDB,
+     $ WORK, LWORK)
 *
 *     End of DTRTRS .
 *
