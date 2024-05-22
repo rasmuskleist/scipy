@@ -3,6 +3,7 @@ egrss_sources = [
   'src/dtrmv.f',
   'src/dtrsm.f',
   'src/dtrsv.f',
+  'src/dtrtrs.f',
 ]
 
 # Building ARPACK yields a ton of rank mismatch (scalar and rank-1) warnings
