@@ -82,16 +82,16 @@ def tosif(a: LinearOperator, t: Partition, k, r=5) -> sif:
             l1 = li.a11
             l2 = li.a22
 
-            _, m1 = l1.shape
-            n2, _ = l2.shape
-            j11 = slice(j.start, j.start + m1)
-            i22 = slice(i.stop - n2, i.stop)
+            _, n1 = l1.shape
+            m2, _ = l2.shape
+            j11 = slice(j.start, j.start + n1)
+            i22 = slice(i.stop - m2, i.stop)
 
             a21 = _PreconditionedMatrix(a[i22, j11], l1, l2)
             u, s, vh = rsvds(a21, k=k, r=r)
 
             u = u * s
-            wh, c = egrss_potrf(-u, u.T.conj(), np.ones(n2))
+            wh, c = egrss_potrf(-u, u.T.conj(), np.ones(m2))
 
             li.u = u
             li.vh = vh
