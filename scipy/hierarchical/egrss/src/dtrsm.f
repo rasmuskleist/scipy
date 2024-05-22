@@ -185,8 +185,9 @@
 *> \ingroup double_egrss_level3
 *
 *  =====================================================================
-      SUBROUTINE DTRSM(UPLO,TRANS,M,N,P,U,LDU,VT,LDVT,D,INCD,B,LDB,WORK,
-     + LWORK)
+      SUBROUTINE DTRSM( UPLO, TRANS, M, N, P, 
+     $                  U, LDU, VT, LDVT, D, INCD, B, LDB,
+     $                  WORK, LWORK)
 *
 *     .. Scalar Arguments ..
       INTEGER INCD, LDB,LDU,LDVT,LWORK,M,N,P
