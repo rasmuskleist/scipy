@@ -103,7 +103,7 @@
 *> \ingroup potrf
 *
 *  =====================================================================
-      SUBROUTINE DPOTRF(UPLO,N,P,U,LDU,VT,LDVT,D,INCD,WORK,LWORK)
+      SUBROUTINE DPOTRF(UPLO,N,P,U,LDU,VT,LDVT,D,INCD,WORK,LWORK,INFO)
 *
 *     .. Scalar Arguments ..
       INTEGER INCD,LDU,LDVT,LWORK,N,P
@@ -118,7 +118,6 @@
 *     .. Local Scalars ..
       LOGICAL UPPER
       INTEGER I,ID,J,K,KD
-      DOUBLE PRECISION TEMP
 *     ..
 *     .. External Functions ..
       LOGICAL LSAME
@@ -129,6 +128,7 @@
 *     ..
 *     .. Intrinsic Functions ..
       INTRINSIC MAX
+      INTRINSIC SQRT
 *     ..
 *     Test the input parameters.
 *
@@ -166,6 +166,27 @@
 *
       IF (UPPER) THEN
       ELSE
+         ID = KD
+         DO I = 1, N
+            DO J = 1, P
+               DO K = 1, P
+                  VT(J,I) = VT(J,I) - WORK(P * J + K) * U(I,K)
+               ENDDO
+            ENDDO
+            DO K = 1, P
+               D(ID) = D(ID) + U(I,K) * VT(I,K)
+            ENDDO
+            D(ID) = SQRT(D(ID))
+            DO J = 1, P
+               VT(J,I) = VT(J,I) / D(ID)
+            ENDDO
+            DO J = 1, P
+               DO K = 1, P
+                  WORK(P * J + K) = WORK(P * J + K) + VT(J,I) * VT(K,I)
+               ENDDO
+            ENDDO
+            ID = ID + INCD
+         ENDDO
       ENDIF
 *
 *     End of DPOTRF .
