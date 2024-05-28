@@ -1,4 +1,5 @@
 egrss_sources = [
+  'src/dpotrf.f',
   'src/dtrmm.f',
   'src/dtrmv.f',
   'src/dtrsm.f',
