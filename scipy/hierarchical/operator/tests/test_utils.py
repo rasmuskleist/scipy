@@ -1,12 +1,40 @@
-from unittest import TestCase
+import itertools
+import warnings
 
 import numpy as np
+from numpy import (
+    arange,
+    array,
+    diag,
+    dot,
+    zeros,
+    identity,
+    tril,
+    conjugate,
+    transpose,
+    float32,
+)
+from numpy.random import randn
+
+from numpy.testing import (
+    assert_equal,
+    assert_almost_equal,
+    assert_,
+    assert_array_almost_equal,
+    assert_allclose,
+    assert_array_equal,
+    suppress_warnings,
+)
+import pytest
+from pytest import raises as assert_raises
+
 import scipy as sp
 from scipy.sparse import diags
-
+from scipy.linalg._testutils import assert_no_overwrite
+from scipy._lib._testutils import check_free_memory, IS_MUSL
+from scipy.linalg.blas import HAS_ILP64
 from scipy.hierarchical.operator import LinearOperator, MatrixOperator, tosif
 from scipy.hierarchical import LeafIterator, cluster_tree, empty
-from scipy.hierarchical.linalg import solve_triangular
 
 
 class Operator(LinearOperator):
@@ -41,9 +69,9 @@ class Operator(LinearOperator):
         return np.dot(self.u, self.vh) + self.d.toarray()
 
 
-class TestSif(TestCase):
+class TestSif:
     def test_cholesky(self):
-        block_size = np.full(2, 2)
+        block_size = np.full(32, 4)
 
         n = np.sum(block_size)
         index_set = np.arange(n)
@@ -61,7 +89,7 @@ class TestSif(TestCase):
 
         l = tosif(op, t, k)
         cho = sp.linalg.cholesky(a, lower=True)
-        self.assertTrue(np.allclose(l.toarray(), cho))
+        assert_almost_equal(l.toarray(), cho)
 
     def test_operator(self):
         n = 64
@@ -75,12 +103,9 @@ class TestSif(TestCase):
         op = Operator(u, u.T, d)
 
         x = np.random.randn(n)
-
-        self.assertTrue(np.allclose(op.matvec(x), np.dot(a, x)))
+        assert_almost_equal(op.matvec(x), np.dot(a, x))
 
         aii = a[:32, :32]
         opii = op[:32, :32]
 
-        self.assertTrue(np.allclose(aii, opii.toarray()))
-
-        # self.assertTrue(False)
+        assert_almost_equal(aii, opii.toarray())
