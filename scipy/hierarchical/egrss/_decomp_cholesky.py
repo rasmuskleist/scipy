@@ -1,4 +1,5 @@
 import numpy as np
+from .egrss import get_egrss_func
 
 
 def cholesky(u, vh, d):
@@ -50,16 +51,13 @@ def cholesky(u, vh, d):
         Analysis and Applications, 41 (2020), pp. 389-412.
     """
 
-    n, m = u.shape
-    p = np.zeros((m, m))
-    c = np.empty_like(d)
-    wh = np.empty_like(vh)
+    potrf = get_egrss_func('potrf', (u, vh, d))
 
-    for k in range(n):
-        wh[:, k] = vh[:, k] - np.dot(p, u[k, :])
-        c[k] = np.sqrt(np.dot(u[k, :], wh[:, k]) + d[k])
-
-        wh[:, k] = wh[:, k] / c[k]
-        p = p + np.outer(wh[:, k], wh[:, k])
-
-    return wh, c
+    u, wh, c, info = potrf('L', u, vh, d)
+    if info == 0:
+        return u, wh, c
+    else:
+        raise ValueError(
+            f"EGRSS reported an illegal value in {-info}-th argument"
+            'on entry to "POTRF".'
+        )
