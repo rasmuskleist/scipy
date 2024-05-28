@@ -161,6 +161,12 @@
           KD = 1
       END IF
 *
+*     Initialize WORK array to zero
+*
+      DO K = 1, P * P
+         WORK(K) = 0.0D0
+      END DO
+*
 *     Start the operations. In this version the elements of A are
 *     accessed sequentially with one pass through A.
 *
@@ -170,7 +176,7 @@
          DO I = 1, N
             DO J = 1, P
                DO K = 1, P
-                  VT(J,I) = VT(J,I) - WORK(P * J + K) * U(I,K)
+                  VT(J,I) = VT(J,I) - WORK(P * (J - 1) + K) * U(I,K)
                ENDDO
             ENDDO
             DO K = 1, P
@@ -182,7 +188,8 @@
             ENDDO
             DO J = 1, P
                DO K = 1, P
-                  WORK(P * J + K) = WORK(P * J + K) + VT(J,I) * VT(K,I)
+                  WORK(P * (J - 1) + K) = WORK(P * (J - 1) + K) +
+     $            VT(J,I) * VT(K,I)
                ENDDO
             ENDDO
             ID = ID + INCD
