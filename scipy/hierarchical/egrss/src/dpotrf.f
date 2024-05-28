@@ -118,6 +118,7 @@
 *     .. Local Scalars ..
       LOGICAL UPPER
       INTEGER I,ID,J,K,KD
+      DOUBLE PRECISION TEMP
 *     ..
 *     .. External Functions ..
       LOGICAL LSAME
@@ -175,21 +176,24 @@
          ID = KD
          DO I = 1, N
             DO J = 1, P
+               TEMP = 0.0D0
                DO K = 1, P
-                  VT(J,I) = VT(J,I) - WORK(P * (J - 1) + K) * U(I,K)
+                  TEMP = TEMP + WORK(P * (J-1) + K) * U(I,K)
                ENDDO
+               VT(J,I) = VT(J,I) - TEMP
             ENDDO
+            TEMP = 0.0D0
             DO K = 1, P
-               D(ID) = D(ID) + U(I,K) * VT(I,K)
+               TEMP = TEMP + U(I,K) * VT(K,I)
             ENDDO
-            D(ID) = SQRT(D(ID))
+            D(ID) = SQRT(TEMP + D(ID))
             DO J = 1, P
                VT(J,I) = VT(J,I) / D(ID)
             ENDDO
             DO J = 1, P
                DO K = 1, P
-                  WORK(P * (J - 1) + K) = WORK(P * (J - 1) + K) +
-     $            VT(J,I) * VT(K,I)
+                  WORK(P * (J-1) + K) = WORK(P * (J-1) + K) 
+     $            + VT(J,I) * VT(K,I)
                ENDDO
             ENDDO
             ID = ID + INCD
