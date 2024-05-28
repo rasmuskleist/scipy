@@ -120,6 +120,11 @@
       INTEGER I,ID,J,K,KD
       DOUBLE PRECISION TEMP
 *     ..
+*     .. Parameters ..
+      DOUBLE PRECISION ZERO
+      PARAMETER (ZERO=0.0D+0)
+*     ..
+*     ..
 *     .. External Functions ..
       LOGICAL LSAME
       EXTERNAL LSAME
@@ -176,17 +181,19 @@
          ID = KD
          DO I = 1, N
             DO J = 1, P
-               TEMP = 0.0D0
                DO K = 1, P
-                  TEMP = TEMP + WORK(P * (J-1) + K) * U(I,K)
+                  VT(J,I) = VT(J,I) - WORK(P * (J-1) + K) * U(I,K)
                ENDDO
-               VT(J,I) = VT(J,I) - TEMP
             ENDDO
-            TEMP = 0.0D0
+            TEMP = D(ID)
             DO K = 1, P
                TEMP = TEMP + U(I,K) * VT(K,I)
             ENDDO
-            D(ID) = SQRT(TEMP + D(ID))
+            IF (TEMP.LE.ZERO) THEN
+               INFO = I
+               RETURN
+            END IF
+            D(ID) = SQRT(TEMP)
             DO J = 1, P
                VT(J,I) = VT(J,I) / D(ID)
             ENDDO
