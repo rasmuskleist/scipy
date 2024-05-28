@@ -1,6 +1,7 @@
 python_sources = [
   '__init__.py',
   'test_basic.py',
+  'test_decomp_cholesky.py',
 ]
 
 
