@@ -1,11 +1,11 @@
 import numpy as np
 from scipy.linalg.lapack import get_lapack_funcs
 
-from scipy.hierarchical.egrss import potrf as egrss_potrf
 from scipy.hierarchical.operator import LinearOperator
 from scipy.hierarchical import sif, Partition, ReverseLevelOrderIterator, empty
 from scipy.hierarchical.operator.randalg import rsvds
 from scipy.hierarchical.linalg import solve_triangular
+from scipy.hierarchical.egrss import get_egrss_func
 
 
 class _PreconditionedMatrix(LinearOperator):
@@ -91,11 +91,17 @@ def tosif(a: LinearOperator, t: Partition, k, r=5) -> sif:
             u, s, vh = rsvds(a21, k=k, r=r)
 
             u = u * s
-            wh, c = egrss_potrf(-u, u.T.conj(), np.ones(m2))
-
-            li.u = u
-            li.vh = vh
-            li.wh = wh
-            li.c = c
+            potrf = get_egrss_func("potrf", dtype=a.dtype)
+            _, wh, c, info = potrf('L', -u, u.T.conj(), np.ones(m2))
+            if info == 0:
+                li.u = u
+                li.vh = vh
+                li.wh = wh
+                li.c = c
+            else:
+                raise ValueError(
+                    f"LAPACK reported an illegal value in {-info}-th argument"
+                    'on entry to "POTRF".'
+                )
 
     return l
