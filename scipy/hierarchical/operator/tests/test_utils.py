@@ -2,29 +2,13 @@ import itertools
 import warnings
 
 import numpy as np
-from numpy import (
-    arange,
-    array,
-    diag,
-    dot,
-    zeros,
-    identity,
-    tril,
-    conjugate,
-    transpose,
-    float32,
-)
+from numpy import (arange, array, diag, dot, zeros, identity, tril, conjugate, transpose,
+                   float32)
 from numpy.random import randn
 
-from numpy.testing import (
-    assert_equal,
-    assert_almost_equal,
-    assert_,
-    assert_array_almost_equal,
-    assert_allclose,
-    assert_array_equal,
-    suppress_warnings,
-)
+from numpy.testing import (assert_equal, assert_almost_equal, assert_,
+                           assert_array_almost_equal, assert_allclose,
+                           assert_array_equal, suppress_warnings,)
 import pytest
 from pytest import raises as assert_raises
 

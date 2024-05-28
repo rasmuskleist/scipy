@@ -5,9 +5,7 @@
 from scipy._lib.deprecation import _sub_module_deprecation
 
 
-__all__ = [  # noqa: F822
-    'solve_triangular'
-]
+__all__ = ["solve_triangular"]  # noqa: F822
 
 
 def __dir__():
@@ -15,6 +13,10 @@ def __dir__():
 
 
 def __getattr__(name):
-    return _sub_module_deprecation(sub_package="linalg", module="basic",
-                                   private_modules=["_basic"], all=__all__,
-                                   attribute=name)
+    return _sub_module_deprecation(
+        sub_package="linalg",
+        module="basic",
+        private_modules=["_basic"],
+        all=__all__,
+        attribute=name,
+    )
