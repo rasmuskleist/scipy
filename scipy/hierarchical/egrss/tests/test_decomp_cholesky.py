@@ -19,3 +19,6 @@ class TestCholesky:
         U, Wh, c = cholesky(U, V.T, d)
         L = np.tril(U @ Wh, -1) + np.diag(c)
         assert_array_almost_equal(A, L @ L.T)
+
+        U = np.triu(Wh.T @ U.T, 1) + np.diag(c)
+        assert_array_almost_equal(A, U.T @ U)
