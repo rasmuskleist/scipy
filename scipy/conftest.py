@@ -134,6 +134,14 @@ if SCIPY_ARRAY_API and isinstance(SCIPY_ARRAY_API, str):
     except ImportError:
         pass
 
+    try:
+        import jax.numpy  # type: ignore[import-not-found]
+        xp_available_backends.update({'jax.numpy': jax.numpy})
+        jax.config.update("jax_enable_x64", True)
+        jax.config.update("jax_default_device", jax.devices(SCIPY_DEVICE)[0])
+    except ImportError:
+        pass
+
     # by default, use all available backends
     if SCIPY_ARRAY_API.lower() not in ("1", "true"):
         SCIPY_ARRAY_API_ = json.loads(SCIPY_ARRAY_API)
@@ -207,8 +215,13 @@ def skip_xp_backends(xp, request):
             if xp.__name__ == 'cupy':
                 pytest.skip(reason=reason)
             elif xp.__name__ == 'torch':
-                if 'cpu' not in torch.empty(0).device.type:
+                if 'cpu' not in xp.empty(0).device.type:
                     pytest.skip(reason=reason)
+            elif xp.__name__ == 'jax.numpy':
+                for d in xp.empty(0).devices():
+                    if 'cpu' not in d.device_kind:
+                        pytest.skip(reason=reason)
+
     if backends is not None:
         reasons = kwargs.get("reasons", False)
         for i, backend in enumerate(backends):
@@ -254,7 +267,7 @@ if HAVE_SCPDT:
 
     # FIXME: populate the dict once
     @contextmanager
-    def warnings_errors_and_rng(test):
+    def warnings_errors_and_rng(test=None):
         """Temporarily turn (almost) all warnings to errors.
 
         Filter out known warnings which we allow.
@@ -280,7 +293,7 @@ if HAVE_SCPDT:
             known_warnings[name] = dict(category=DeprecationWarning)
 
         from scipy import integrate
-        # the funcions are known to emit IntergrationWarnings
+        # the functions are known to emit IntegrationWarnings
         integration_w = ['scipy.special.ellip_normal',
                          'scipy.special.ellip_harm_2',
         ]
@@ -324,16 +337,15 @@ if HAVE_SCPDT:
         with _fixed_default_rng():
             np.random.seed(None)
             with warnings.catch_warnings():
-                if test.name in known_warnings:
+                if test and test.name in known_warnings:
                     warnings.filterwarnings('ignore',
                                             **known_warnings[test.name])
                     yield
-                elif test.name in legit:
+                elif test and test.name in legit:
                     yield
                 else:
                     warnings.simplefilter('error', Warning)
                     yield
-
 
     dt_config.user_context_mgr = warnings_errors_and_rng
     dt_config.skiplist = set([
@@ -376,6 +388,15 @@ if HAVE_SCPDT:
         "scipy.optimize.cython_optimize",
         "scipy.test",
         "scipy.show_config",
+        # equivalent to "pytest --ignore=path/to/file"
+        "scipy/special/_precompute",
+        "scipy/interpolate/_interpnd_info.py",
+        "scipy/_lib/array_api_compat",
+        "scipy/_lib/highs",
+        "scipy/_lib/unuran",
+        "scipy/_lib/_gcutils.py",
+        "scipy/_lib/doccer.py",
+        "scipy/_lib/_uarray",
     ]
 
     dt_config.pytest_extra_xfail = {
