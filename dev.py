@@ -436,6 +436,10 @@ class Build(Task):
         help=("If set, use `Accelerate` as the BLAS/LAPACK to build against."
               " Takes precedence over -with-scipy-openblas (macOS only)")
     )
+    tags = Option(
+        ['--tags'], default="runtime,python-runtime,tests,devel",
+        show_default=True, help="Install tags to be used by meson."
+    )
 
     @classmethod
     def setup_build(cls, dirs, args):
@@ -494,7 +498,7 @@ class Build(Task):
         elif args.with_scipy_openblas:
             cls.configure_scipy_openblas()
             env['PKG_CONFIG_PATH'] = os.pathsep.join([
-                    os.path.join(os.getcwd(), '.openblas'),
+                    os.getcwd(),
                     env.get('PKG_CONFIG_PATH', '')
                     ])
 
@@ -544,7 +548,8 @@ class Build(Task):
             if non_empty and not dirs.site.exists():
                 raise RuntimeError("Can't install in non-empty directory: "
                                    f"'{dirs.installed}'")
-        cmd = ["meson", "install", "-C", args.build_dir, "--only-changed"]
+        cmd = ["meson", "install", "-C", args.build_dir,
+               "--only-changed", "--tags", args.tags]
         log_filename = dirs.root / 'meson-install.log'
         start_time = datetime.datetime.now()
         cmd_str = ' '.join([str(p) for p in cmd])
@@ -602,13 +607,12 @@ class Build(Task):
 
     @classmethod
     def configure_scipy_openblas(self, blas_variant='32'):
-        """Create .openblas/scipy-openblas.pc and scipy/_distributor_init_local.py
+        """Create scipy-openblas.pc and scipy/_distributor_init_local.py
 
         Requires a pre-installed scipy-openblas32 wheel from PyPI.
         """
         basedir = os.getcwd()
-        openblas_dir = os.path.join(basedir, ".openblas")
-        pkg_config_fname = os.path.join(openblas_dir, "scipy-openblas.pc")
+        pkg_config_fname = os.path.join(basedir, "scipy-openblas.pc")
 
         if os.path.exists(pkg_config_fname):
             return None
@@ -626,9 +630,8 @@ class Build(Task):
         with open(local, "w", encoding="utf8") as fid:
             fid.write(f"import {module_name}\n")
 
-        os.makedirs(openblas_dir, exist_ok=True)
         with open(pkg_config_fname, "w", encoding="utf8") as fid:
-            fid.write(openblas.get_pkg_config().replace("\\", "/"))
+            fid.write(openblas.get_pkg_config())
 
     @classmethod
     def run(cls, add_path=False, **kwargs):
@@ -698,7 +701,8 @@ class Test(Task):
         ['--array-api-backend', '-b'], default=None, metavar='ARRAY_BACKEND',
         multiple=True,
         help=(
-            "Array API backend ('all', 'numpy', 'pytorch', 'cupy', 'array_api_strict')."
+            "Array API backend "
+            "('all', 'numpy', 'pytorch', 'cupy', 'array_api_strict', 'jax.numpy')."
         )
     )
     # Argument can't have `help=`; used to consume all of `-- arg1 arg2 arg3`
@@ -807,6 +811,10 @@ class SmokeDocs(Task):
         dirs.add_sys_path()
         print(f"SciPy from development installed path at: {dirs.site}")
 
+        # prevent obscure error later; cf https://github.com/numpy/numpy/pull/26691/
+        if not importlib.util.find_spec("scipy_doctest"):
+            raise ModuleNotFoundError("Please install scipy-doctest")
+
         # FIXME: support pos-args with doit
         extra_argv = list(pytest_args[:]) if pytest_args else []
         if extra_argv and extra_argv[0] == '--':
@@ -823,7 +831,9 @@ class SmokeDocs(Task):
         else:
             tests = None
 
-        # use strategy=api unless -t path/to/specific/file
+        # Request doctesting; use strategy=api unless -t path/to/specific/file
+        # also switch off assertion rewriting: not useful for doctests
+        extra_argv += ["--doctest-modules", "--assert=plain"]
         if not args.tests:
             extra_argv += ['--doctest-collect=api']
 
